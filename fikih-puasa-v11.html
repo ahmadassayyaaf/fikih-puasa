@@ -1,0 +1,1154 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>FIKIH PUASA — Klasifikasi Pembatal</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ═══ TOKENS ═══ */
+:root {
+  --bg:#0E0E12; --surface:rgba(22,22,28,0.72);
+  --t1:#EEEEF2; --t2:#9898AC; --t3:#52526A; --t4:#30303E;
+  --blue:#4A72CC; --bm:#2B4A9F; --bd-deep:#1A2A6C;
+  --bdim:rgba(74,114,204,0.10); --bbd:rgba(74,114,204,0.22);
+  --border:#22222E; --bs:rgba(255,255,255,0.05);
+  --r:8px; --rsm:5px; --nh:68px;
+  --mono:'JetBrains Mono',monospace;
+  /* ambient — driven by JS */
+  --amb-opacity:1;
+  --progress-glow:rgba(74,114,204,0);
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{width:100%;height:100%;overflow:hidden;font-family:var(--mono);background:var(--bg);color:var(--t1)}
+
+/* ═══ BG ═══ */
+.bg-grid{position:fixed;inset:0;z-index:0;
+  background-image:linear-gradient(rgba(255,255,255,.026)1px,transparent 1px),
+                   linear-gradient(90deg,rgba(255,255,255,.026)1px,transparent 1px);
+  background-size:32px 32px}
+.bg-glow{position:fixed;inset:0;z-index:1;pointer-events:none;
+  animation:glowPulse 9s ease-in-out infinite;
+  background:
+    radial-gradient(ellipse 70% 55% at 95% 0%,rgba(43,74,159,.40)0%,transparent 55%),
+    radial-gradient(ellipse 50% 60% at 0% 100%,rgba(26,42,108,.45)0%,transparent 55%)}
+@keyframes glowPulse{0%,100%{opacity:1}50%{opacity:.72}}
+/* ambient intensifier — driven by JS progress */
+#amb-overlay{position:fixed;inset:0;z-index:2;pointer-events:none;
+  background:radial-gradient(ellipse 80% 60% at 50% 50%,rgba(74,114,204,0) 0%,transparent 70%);
+  opacity:0;transition:opacity 1.2s ease}
+.bg-grain{position:fixed;inset:0;z-index:2;opacity:.55;pointer-events:none;mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.72' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23g)' opacity='0.12'/%3E%3C/svg%3E");
+  background-size:200px}
+.bg-vignette{position:fixed;inset:0;z-index:3;pointer-events:none;
+  background:radial-gradient(ellipse 90% 90% at 50% 50%,transparent 25%,rgba(10,10,14,.72)100%)}
+
+/* ═══ FLASH OVERLAY — unlock feedback ═══ */
+#flash{position:fixed;inset:0;z-index:500;pointer-events:none;opacity:0;
+  background:radial-gradient(ellipse 60% 40% at 50% 50%,rgba(74,114,204,.1),transparent 70%);
+  transition:opacity .06s ease}
+#flash.on{opacity:1}
+
+/* ═══ TOP BAR ═══ */
+#top-bar{position:fixed;top:0;left:0;right:0;z-index:90;height:44px;
+  display:flex;align-items:center;justify-content:space-between;padding:0 20px;
+  background:rgba(14,14,18,.80);backdrop-filter:blur(16px);border-bottom:1px solid rgba(255,255,255,.04)}
+#breadcrumb{display:flex;align-items:center;gap:6px;overflow:hidden;white-space:nowrap;
+  font-size:9px;font-weight:600;letter-spacing:1.8px;text-transform:uppercase;color:var(--t3);
+  max-width:calc(100% - 80px)}
+#breadcrumb .bc-ch{color:var(--t2)}
+#breadcrumb .bc-sep{color:var(--t4)}
+#slide-counter{font-size:9px;font-weight:600;letter-spacing:1.5px;color:var(--t3);white-space:nowrap;flex-shrink:0}
+#slide-counter b{color:var(--blue)}
+
+/* progress bar — glow grows with progress */
+#progress{position:fixed;top:44px;left:0;height:2px;z-index:91;
+  background:linear-gradient(90deg,var(--bd-deep),var(--blue),#7CA0E8);
+  box-shadow:0 0 8px 1px var(--progress-glow);
+  transition:width .55s cubic-bezier(0.22,1,0.36,1), box-shadow .8s ease}
+
+/* ═══ STAGE ═══ */
+#stage{position:fixed;top:44px;bottom:var(--nh);left:0;right:0;z-index:10;
+  display:flex;align-items:center;justify-content:center}
+/* micro-vibration on unlock */
+#stage.vibe{animation:stageVibe 90ms cubic-bezier(.36,.07,.19,.97) both}
+@keyframes stageVibe{
+  10%{transform:translateX(-2.5px) rotate(-.2deg)}
+  30%{transform:translateX(2px) rotate(.15deg)}
+  50%{transform:translateX(-1.5px)}
+  70%{transform:translateX(1.5px)}
+  90%,100%{transform:none}}
+
+/* ═══ SLIDES ═══ */
+.slide{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  padding:24px 24px 12px;opacity:0;pointer-events:none;will-change:transform,opacity}
+.slide.active{opacity:1;pointer-events:all}
+
+/* sequential transitions */
+.slide.fwd-exit  {animation:fwdExit  .32s cubic-bezier(.4,0,1,1) forwards}
+.slide.fwd-enter {animation:fwdEnter .46s cubic-bezier(.22,1,.36,1) forwards}
+.slide.bwd-exit  {animation:bwdExit  .32s cubic-bezier(.4,0,1,1) forwards}
+.slide.bwd-enter {animation:bwdEnter .46s cubic-bezier(.22,1,.36,1) forwards}
+.slide.ch-exit   {animation:chExit   .34s cubic-bezier(.4,0,1,1) forwards}
+.slide.ch-enter  {animation:chEnter  .52s cubic-bezier(.22,1,.36,1) forwards}
+@keyframes fwdExit  {from{opacity:1;transform:none}to{opacity:0;transform:translateY(-22px) scale(.976)}}
+@keyframes fwdEnter {from{opacity:0;transform:translateY(26px) scale(.978)}to{opacity:1;transform:none}}
+@keyframes bwdExit  {from{opacity:1;transform:none}to{opacity:0;transform:translateY(22px) scale(.976)}}
+@keyframes bwdEnter {from{opacity:0;transform:translateY(-26px) scale(.978)}to{opacity:1;transform:none}}
+@keyframes chExit   {from{opacity:1;transform:none;filter:none}to{opacity:0;transform:scale(.93);filter:blur(2px)}}
+@keyframes chEnter  {from{opacity:0;transform:scale(1.06);filter:blur(2px)}to{opacity:1;transform:none;filter:none}}
+
+/* ═══ PROGRESS REVELATION — blur→clear stagger ═══ */
+[data-reveal]{
+  opacity:0;
+  transform:translateY(14px);
+  filter:blur(5px);
+  transition:opacity .5s ease, transform .5s cubic-bezier(.22,1,.36,1), filter .45s ease}
+[data-reveal].in{opacity:1;transform:none;filter:none}
+
+/* ═══ SCROLL INNER ═══ */
+.slide-inner{width:100%;max-width:580px;max-height:100%;overflow-y:auto;overflow-x:hidden;
+  overscroll-behavior:contain;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.slide-inner::-webkit-scrollbar{display:none}
+.slide-wrap{position:relative}
+.slide-wrap::after{content:'';position:sticky;bottom:0;left:0;right:0;height:48px;display:block;
+  background:linear-gradient(transparent,rgba(14,14,18,.92));pointer-events:none;opacity:0;transition:opacity .3s}
+.slide-wrap.has-overflow::after{opacity:1}
+.scroll-pill{display:none;position:sticky;bottom:8px;width:100%;text-align:center;pointer-events:none}
+.scroll-pill span{display:inline-flex;align-items:center;gap:4px;font-size:7.5px;letter-spacing:1.5px;
+  text-transform:uppercase;color:var(--t3);background:rgba(22,22,28,.85);backdrop-filter:blur(8px);
+  border:1px solid var(--border);border-radius:20px;padding:4px 12px;
+  animation:pillFloat 2s ease-in-out infinite}
+.has-overflow .scroll-pill{display:block}
+@keyframes pillFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+
+/* ═══ BOTTOM NAV ═══ */
+#nav-bar{position:fixed;bottom:0;left:0;right:0;z-index:90;height:var(--nh);
+  display:grid;grid-template-columns:1fr auto 1fr;align-items:center;padding:0 16px;gap:12px;
+  background:rgba(14,14,18,.88);backdrop-filter:blur(18px);border-top:1px solid rgba(255,255,255,.05)}
+.nav-btn{display:flex;align-items:center;gap:8px;cursor:pointer;border:1px solid transparent;
+  background:none;font-family:var(--mono);color:var(--t2);padding:10px 14px;border-radius:var(--r);
+  font-size:9px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;
+  min-height:44px;user-select:none;
+  transition:background .2s,border-color .2s,color .2s,
+             transform .35s cubic-bezier(.22,1,.36,1),
+             box-shadow .35s ease}
+/* depth lift on hover */
+.nav-btn:hover:not(:disabled){
+  background:rgba(255,255,255,.04);border-color:var(--border);
+  transform:translateY(-2px) scale(1.01);
+  box-shadow:0 6px 20px rgba(0,0,0,.35)}
+.nav-btn:active:not(:disabled){
+  transform:translateY(0) scale(.97);box-shadow:none;background:rgba(255,255,255,.07)}
+.nav-btn:disabled{opacity:.18;cursor:not-allowed}
+.nav-btn svg{width:14px;height:14px;stroke:currentColor;stroke-width:2.5;flex-shrink:0}
+#btn-prev{justify-content:flex-start}
+#btn-next{justify-content:flex-end}
+#btn-next:not(:disabled){color:var(--blue)}
+#nav-dots{display:flex;align-items:center;gap:5px;flex-wrap:nowrap}
+.ndot{width:5px;height:5px;border-radius:50%;background:var(--t4);cursor:pointer;
+  transition:all .28s cubic-bezier(.22,1,.36,1);flex-shrink:0}
+.ndot:hover{background:var(--t2);transform:scale(1.5)}
+.ndot.active{background:var(--blue);width:14px;border-radius:3px;box-shadow:0 0 8px rgba(74,114,204,.7)}
+.ndot.done{background:var(--t3)}
+.ndot-sep{width:1px;height:10px;background:var(--border);margin:0 1px;flex-shrink:0}
+
+/* ch-layout: stacked on mobile, 2-col on desktop via @media */
+.ch-layout{display:flex;flex-direction:column}
+.ch-left{display:block}
+
+/* keyboard hint — desktop only */
+#kb-hint{display:none;align-items:center;gap:6px;flex-shrink:0}
+.kb-key{font-size:8px;font-weight:700;letter-spacing:.5px;color:var(--t4);
+  border:1px solid var(--border);border-radius:3px;padding:2px 6px;background:rgba(255,255,255,.03)}
+.glass{background:var(--surface);backdrop-filter:blur(14px);
+  border:1px solid rgba(255,255,255,.06);border-radius:var(--r);
+  transition:border-color .3s ease, box-shadow .35s ease, transform .35s cubic-bezier(.22,1,.36,1)}
+
+/* ═══ ONBOARDING ═══ */
+#onboarding{position:fixed;inset:0;z-index:200;display:flex;align-items:center;justify-content:center;
+  background:rgba(14,14,18,.55);backdrop-filter:blur(18px);cursor:pointer;
+  animation:fadeIn .45s ease forwards}
+#onboarding.hidden{animation:fadeOut .32s ease forwards;pointer-events:none}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes fadeOut{from{opacity:1}to{opacity:0}}
+.ob-box{background:rgba(22,22,28,.82);backdrop-filter:blur(20px);
+  border:1px solid rgba(255,255,255,.07);border-radius:var(--r);
+  padding:28px;max-width:300px;width:calc(100% - 48px);cursor:default}
+.ob-eyebrow{display:flex;align-items:center;gap:10px;margin-bottom:16px}
+.ob-eyebrow-line{width:16px;height:1px;background:var(--blue);opacity:.5}
+.ob-title{font-size:12px;font-weight:700;color:var(--t1);margin-bottom:10px;letter-spacing:-.2px}
+.ob-desc{font-size:10px;font-weight:300;color:var(--t2);line-height:1.85;margin-bottom:18px}
+.ob-methods{display:flex;flex-direction:column;margin-bottom:20px;
+  border:1px solid var(--border);border-radius:var(--r);overflow:hidden}
+.ob-row{display:flex;align-items:center;gap:10px;font-size:9.5px;color:var(--t2);
+  padding:10px 14px;border-bottom:1px solid rgba(255,255,255,.04)}
+.ob-row:last-child{border-bottom:none}
+.ob-row-n{font-size:8.5px;font-weight:700;color:var(--t4);width:14px;flex-shrink:0}
+.ob-key{background:rgba(74,114,204,.1);border:1px solid var(--bbd);border-radius:var(--rsm);
+  padding:2px 8px;font-size:8px;color:var(--blue);font-weight:700;white-space:nowrap}
+.ob-cta{display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  background:var(--bdim);border:1px solid var(--bbd);border-radius:var(--r);
+  padding:11px 22px;font-family:var(--mono);font-size:9.5px;font-weight:700;
+  letter-spacing:1.5px;text-transform:uppercase;color:var(--blue);cursor:pointer;width:100%;
+  transition:background .2s,border-color .2s,transform .35s cubic-bezier(.22,1,.36,1),box-shadow .35s}
+.ob-cta:hover{background:rgba(74,114,204,.18);border-color:rgba(74,114,204,.4);
+  transform:translateY(-2px);box-shadow:0 8px 24px rgba(74,114,204,.22)}
+.ob-cta:active{transform:scale(.96);box-shadow:none}
+
+/* ═══ TYPOGRAPHY ═══ */
+.label{font-size:9px;font-weight:600;letter-spacing:2.5px;text-transform:uppercase;color:var(--t3)}
+.tag{display:inline-block;font-size:8.5px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;
+  padding:3px 8px;border-radius:var(--rsm);border:1px solid}
+.tag-blue{color:var(--blue);border-color:var(--bbd);background:var(--bdim)}
+.tag-muted{color:var(--t3);border-color:var(--border)}
+
+/* ═══ HERO ═══ */
+.hero-eyebrow{display:flex;align-items:center;gap:12px;margin-bottom:18px}
+.hero-line{width:20px;height:1px;background:var(--blue);opacity:.5}
+.hero-title{font-size:clamp(30px,7vw,52px);font-weight:700;line-height:1.06;letter-spacing:-2px;margin-bottom:10px}
+.hero-accent{display:block;background:linear-gradient(120deg,var(--blue)0%,#7CA0E8 55%,var(--t2)100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero-desc{font-size:11.5px;font-weight:300;color:var(--t2);line-height:2;margin-bottom:20px}
+.hero-source{display:inline-flex;align-items:center;gap:8px;background:rgba(22,22,28,.8);
+  backdrop-filter:blur(8px);border:1px solid var(--border);border-radius:var(--r);
+  padding:8px 14px;font-size:10px;color:var(--t2);margin-bottom:22px}
+.hero-dot{width:5px;height:5px;border-radius:50%;background:var(--blue);flex-shrink:0}
+.hero-creator{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;
+  margin-bottom:24px;padding:10px 14px;border-radius:var(--r);
+  background:rgba(22,22,28,.5);border:1px solid rgba(255,255,255,.04)}
+.hero-creator-label{font-size:8px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--t4)}
+.hero-creator-handle{font-size:9.5px;font-weight:600;color:var(--t3)}
+.hero-creator-handle span{color:var(--blue)}
+/* depth lift CTAs */
+.hero-cta{display:inline-flex;align-items:center;gap:10px;background:var(--bdim);
+  border:1px solid var(--bbd);border-radius:var(--r);padding:12px 22px;font-family:var(--mono);
+  font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--blue);cursor:pointer;
+  transition:background .2s,border-color .2s,transform .35s cubic-bezier(.22,1,.36,1),box-shadow .35s}
+.hero-cta:hover{background:rgba(74,114,204,.18);border-color:rgba(74,114,204,.4);
+  transform:translateY(-3px) scale(1.01);box-shadow:0 10px 28px rgba(74,114,204,.28)}
+.hero-cta:active{transform:scale(.96) translateY(0);box-shadow:none}
+.hero-cta svg{width:14px;height:14px;stroke:var(--blue)}
+
+/* ═══ OVERVIEW ═══ */
+.overview-intro{font-size:11.5px;font-weight:300;color:var(--t2);line-height:2;margin-bottom:20px;
+  padding:16px 20px;border-left:2px solid var(--blue)}
+.overview-intro b{color:var(--t1);font-weight:600}
+.stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
+/* depth on stat cards */
+.stat{padding:16px;display:flex;flex-direction:column;gap:4px;overflow:hidden;cursor:default;
+  transition:border-color .3s,box-shadow .35s,transform .35s cubic-bezier(.22,1,.36,1)}
+.stat:hover{border-color:rgba(74,114,204,.3)!important;
+  transform:translateY(-3px) scale(1.02);
+  box-shadow:0 8px 28px rgba(0,0,0,.4),0 0 0 1px rgba(74,114,204,.1)}
+.stat:active{transform:scale(.97)}
+.stat-num{font-size:28px;font-weight:700;letter-spacing:-1.5px;line-height:1}
+.stat-num.blue{color:var(--blue)}
+.stat-lbl{font-size:8px;font-weight:500;letter-spacing:1.5px;text-transform:uppercase;color:var(--t3);line-height:1.4}
+.def-card{border-left:2px solid var(--blue);padding:16px 20px}
+.def-label{margin-bottom:8px}
+.def-text{font-size:11px;font-weight:300;color:var(--t2);line-height:2.1}
+.def-text b{color:var(--t1);font-weight:600}
+
+/* ═══ CHAPTER BREAK ═══ */
+.ch-num{font-size:88px;font-weight:700;letter-spacing:-6px;line-height:.9;color:var(--t4);margin-bottom:12px}
+.ch-title{font-size:clamp(22px,4.5vw,34px);font-weight:700;letter-spacing:-1px;margin-bottom:12px;min-height:1.2em}
+/* typing cursor */
+.ch-cursor{display:inline-block;width:2px;height:.85em;background:var(--blue);
+  vertical-align:text-bottom;margin-left:2px;animation:cursorBlink .65s steps(1) infinite}
+@keyframes cursorBlink{0%,100%{opacity:1}50%{opacity:0}}
+.ch-desc{font-size:11px;font-weight:300;color:var(--t2);line-height:1.9;margin-bottom:16px}
+.ch-tags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:24px}
+.ch-next{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--border);border-radius:var(--r);
+  padding:10px 16px;font-size:9px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;
+  color:var(--t2);cursor:pointer;background:none;font-family:var(--mono);
+  transition:border-color .25s,color .25s,transform .35s cubic-bezier(.22,1,.36,1),box-shadow .35s}
+.ch-next:hover{border-color:var(--bbd);color:var(--blue);
+  transform:translateY(-2px);box-shadow:0 6px 18px rgba(0,0,0,.28)}
+.ch-next:active{transform:scale(.96);box-shadow:none}
+.ch-next svg{width:12px;height:12px;stroke:currentColor}
+
+/* ═══ SECTION HEAD ═══ */
+.sec-head{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.sec-n{font-size:9px;color:var(--t4);letter-spacing:1px}
+.sec-t{font-size:10px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--t1)}
+.sec-rule{flex:1;height:1px;background:var(--border)}
+.cat-head{display:flex;align-items:baseline;gap:10px;margin-bottom:10px}
+.cat-desc{font-size:9px;font-weight:300;color:var(--t3)}
+.hint-bar{display:flex;align-items:center;gap:7px;margin-bottom:10px;padding:7px 11px;
+  background:rgba(74,114,204,.06);border:1px solid var(--bbd);border-radius:var(--rsm);font-size:8.5px;color:var(--t3)}
+.hint-bar svg{width:10px;height:10px;stroke:var(--blue);flex-shrink:0}
+
+/* ═══ ITEMS ═══ */
+.items-card{overflow:hidden}
+.item{display:grid;grid-template-columns:22px 1fr auto;gap:0 12px;align-items:start;
+  padding:12px 14px;border-bottom:1px solid var(--bs);cursor:pointer;
+  transition:background .2s,transform .3s cubic-bezier(.22,1,.36,1)}
+.item:last-child{border-bottom:none}
+/* slide x on hover — depth pull */
+.item:hover{background:rgba(255,255,255,.035);transform:translateX(3px)}
+.item:active{transform:translateX(3px) scale(.99)}
+.item.open{background:rgba(74,114,204,.04)}
+.item-n{font-size:8.5px;color:var(--t4);padding-top:3px}
+.item-name{font-size:12px;font-weight:600;color:var(--t1);margin-bottom:2px;letter-spacing:-.2px}
+.item-desc{font-size:10px;font-weight:300;color:var(--t2);line-height:1.7}
+.item-dalil{grid-column:2/4;overflow:hidden;max-height:0;opacity:0;
+  transition:max-height .38s ease,opacity .3s,margin .3s}
+.item.open .item-dalil{max-height:170px;opacity:1;margin-top:8px}
+.item-dalil-inner{padding:10px 12px;background:rgba(74,114,204,.06);border:1px solid var(--bbd);
+  border-radius:var(--rsm);font-size:9.5px;color:var(--t2);line-height:1.8}
+.item-dalil-inner .dl-lbl{color:var(--t3);font-size:8px;display:block;margin-bottom:3px;
+  letter-spacing:1px;text-transform:uppercase}
+.item-dalil-inner p{font-style:italic}
+.item-right{display:flex;flex-direction:column;align-items:flex-end;gap:4px}
+.item-badge{font-size:8px;font-weight:700;letter-spacing:1px;color:var(--t3);white-space:nowrap;padding-top:2px}
+.item-badge.crit{background:linear-gradient(135deg,var(--bd-deep),var(--bm));color:#fff;
+  padding:2px 8px;border-radius:var(--rsm)}
+.item-chevron{width:12px;height:12px;display:flex;align-items:center;justify-content:center;
+  color:var(--t4);transition:transform .3s,color .2s}
+.item.open .item-chevron{transform:rotate(180deg);color:var(--blue)}
+.item-chevron svg{width:9px;height:9px;stroke-width:2.5}
+.kafarat-box{margin-top:8px;padding:9px 12px;background:rgba(74,114,204,.07);
+  border:1px solid var(--bbd);border-radius:var(--rsm);font-size:9.5px;font-weight:300;
+  color:var(--t2);line-height:1.8}
+.kafarat-box b{color:var(--t1);font-weight:600}
+
+/* ═══ SAFE GRID ═══ */
+.safe-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.safe-item{padding:13px;
+  transition:background .2s,border-color .2s,transform .35s cubic-bezier(.22,1,.36,1),box-shadow .35s}
+.safe-item:hover{background:rgba(255,255,255,.05)!important;border-color:rgba(74,114,204,.25)!important;
+  transform:translateY(-3px) scale(1.01);box-shadow:0 8px 24px rgba(0,0,0,.35)}
+.safe-item:active{transform:scale(.97)}
+.safe-valid{font-size:7.5px;font-weight:700;letter-spacing:1.5px;color:var(--t4);text-transform:uppercase;margin-bottom:4px}
+.safe-name{font-size:11px;font-weight:600;color:var(--t1);margin-bottom:4px}
+.safe-desc{font-size:9px;font-weight:300;color:var(--t2);line-height:1.65}
+
+/* ═══ VALIDATION ═══ */
+.val-card{overflow:hidden;position:relative}
+.val-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,var(--bd-deep),var(--blue),#7CA0E8);border-radius:var(--r) var(--r) 0 0}
+.val-intro{padding:16px 16px 12px;font-size:11px;font-weight:300;color:var(--t2);line-height:1.85;border-bottom:1px solid var(--bs)}
+.val-intro b{color:var(--t1);font-weight:600}
+.val-row{display:grid;grid-template-columns:18px 1fr auto;gap:0 12px;align-items:start;
+  padding:14px 16px;border-bottom:1px solid var(--bs);
+  transition:background .15s,transform .3s cubic-bezier(.22,1,.36,1)}
+.val-row:last-child{border-bottom:none}
+.val-row:hover{background:rgba(255,255,255,.03);transform:translateX(4px)}
+.val-n{font-size:10px;font-weight:700;color:var(--blue);padding-top:2px}
+.val-key{font-size:13px;font-weight:700;color:var(--t1);letter-spacing:-.3px;margin-bottom:3px}
+.val-sub{font-size:9.5px;font-weight:300;color:var(--t2);line-height:1.7}
+.val-req{font-size:7.5px;font-weight:600;letter-spacing:1px;color:var(--t3);
+  border:1px solid var(--border);border-radius:var(--rsm);padding:2px 7px;white-space:nowrap;text-transform:uppercase}
+
+/* ═══ CLOSING + CONTACT ═══ */
+.close-big{font-size:clamp(22px,5vw,38px);font-weight:700;letter-spacing:-1.5px;line-height:1.2;margin-bottom:12px}
+.close-ref{font-size:9.5px;font-weight:300;color:var(--t3);line-height:2;margin-bottom:24px}
+.close-ref b{color:var(--t2);font-weight:500}
+.contact-card{padding:20px 22px;position:relative;overflow:hidden;margin-bottom:18px}
+/* scan line */
+.contact-card::before{content:'';position:absolute;top:0;left:0;width:35%;height:1px;
+  background:linear-gradient(90deg,transparent,var(--blue),transparent);
+  animation:borderScan 2.8s linear infinite}
+@keyframes borderScan{from{transform:translateX(-100%)}to{transform:translateX(390%)};}
+.contact-label{font-size:8.5px;font-weight:600;letter-spacing:2px;text-transform:uppercase;
+  color:var(--t3);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.contact-label::before{content:'';width:16px;height:1px;background:var(--blue);opacity:.5}
+.contact-links{display:flex;flex-direction:column;gap:8px}
+.contact-link{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:var(--rsm);
+  border:1px solid var(--border);cursor:pointer;text-decoration:none;position:relative;overflow:hidden;
+  transition:border-color .25s,background .25s,transform .35s cubic-bezier(.22,1,.36,1),box-shadow .35s}
+.contact-link:hover{border-color:var(--bbd);background:rgba(74,114,204,.06);
+  transform:translateY(-2px);box-shadow:0 6px 18px rgba(0,0,0,.28)}
+.contact-link:active{transform:scale(.97);box-shadow:none}
+/* radial ripple on hover */
+.contact-link::after{content:'';position:absolute;inset:0;
+  background:radial-gradient(circle at var(--rx,50%) var(--ry,50%),rgba(74,114,204,.18)0%,transparent 65%);
+  opacity:0;transition:opacity .5s}
+.contact-link:hover::after{opacity:1}
+.contact-link-icon{width:28px;height:28px;border-radius:var(--rsm);background:var(--bdim);
+  border:1px solid var(--bbd);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.contact-link-icon svg{width:14px;height:14px;stroke:var(--blue)}
+.contact-link-info{flex:1;min-width:0}
+.contact-link-platform{font-size:8.5px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--t3);margin-bottom:2px}
+.contact-link-handle{font-size:11.5px;font-weight:600;color:var(--t1)}
+.contact-link-arrow{color:var(--t4);transition:transform .25s,color .2s;flex-shrink:0}
+.contact-link:hover .contact-link-arrow{transform:translateX(4px);color:var(--blue)}
+.contact-link-arrow svg{width:12px;height:12px;stroke:currentColor;stroke-width:2.5}
+#copy-toast{position:fixed;bottom:calc(var(--nh) + 16px);left:50%;
+  transform:translateX(-50%) translateY(8px);z-index:300;
+  background:rgba(74,114,204,.15);backdrop-filter:blur(12px);
+  border:1px solid var(--bbd);border-radius:20px;padding:7px 16px;
+  font-size:8.5px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--blue);
+  opacity:0;transition:opacity .25s,transform .25s;pointer-events:none}
+#copy-toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.restart-btn{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--bbd);
+  border-radius:var(--r);padding:11px 20px;font-family:var(--mono);font-size:9.5px;font-weight:700;
+  letter-spacing:1.5px;text-transform:uppercase;color:var(--blue);cursor:pointer;background:var(--bdim);
+  transition:background .2s,border-color .2s,transform .35s cubic-bezier(.22,1,.36,1),box-shadow .35s}
+.restart-btn:hover{background:rgba(74,114,204,.2);border-color:rgba(74,114,204,.4);
+  transform:translateY(-2px);box-shadow:0 8px 22px rgba(74,114,204,.22)}
+.restart-btn:active{transform:scale(.96);box-shadow:none}
+.restart-btn svg{width:13px;height:13px;stroke:var(--blue)}
+
+/* ═══ RESPONSIVE ═══ */
+
+/* ── Mobile small < 390px ── */
+@media(max-width:390px){
+  .hero-title{font-size:26px}
+  .ch-num{font-size:60px;letter-spacing:-4px}
+  .ch-title{font-size:20px}
+  .stats-grid{gap:6px}
+  .stat-num{font-size:24px}
+  .safe-grid{grid-template-columns:1fr 1fr}
+  .val-req{display:none}
+}
+
+/* ── Mobile standard 390-639px ── */
+@media(max-width:639px){
+  .slide{padding:20px 18px 10px}
+}
+
+/* ── Tablet 640px+ ── */
+@media(min-width:640px){
+  :root{--nh:72px}
+  .slide{padding:28px 32px 16px}
+  .slide-inner{max-width:640px}
+  #top-bar{height:48px;padding:0 28px}
+  #progress{top:48px}
+  #stage{top:48px}
+  #breadcrumb{font-size:9.5px}
+  #slide-counter{font-size:9.5px}
+  #nav-bar{padding:0 24px;gap:16px}
+  .nav-btn{font-size:9.5px;padding:12px 18px}
+  .hero-title{font-size:clamp(34px,6vw,52px)}
+  .hero-desc{font-size:12px}
+  .stat-num{font-size:32px}
+  .stat-lbl{font-size:8.5px}
+  .item-name{font-size:13px}
+  .val-key{font-size:14px}
+  .ob-box{max-width:360px;padding:32px}
+  .ob-title{font-size:13px}
+}
+
+/* ── Desktop 1024px+ ── */
+@media(min-width:1024px){
+  :root{--nh:64px;--sidebar-w:220px}
+
+  /* slide takes full width, but content is wider */
+  .slide{padding:32px 40px 20px}
+  .slide-inner{max-width:820px}
+
+  /* top bar wider */
+  #top-bar{height:52px;padding:0 36px}
+  #progress{top:52px;height:3px}
+  #stage{top:52px}
+
+  /* keyboard hint in top bar */
+  #kb-hint{display:flex}
+
+  /* wider nav */
+  #nav-bar{padding:0 40px;gap:20px;height:var(--nh)}
+  .nav-btn{font-size:10px;padding:12px 22px;gap:10px}
+  .nav-btn svg{width:15px;height:15px}
+  .ndot{width:6px;height:6px}
+  .ndot.active{width:18px}
+  .ndot-sep{height:12px}
+
+  /* hero */
+  .hero-title{font-size:clamp(42px,4.5vw,64px);letter-spacing:-3px}
+  .hero-desc{font-size:12.5px}
+  .hero-source{font-size:11px;padding:10px 18px}
+
+  /* stats */
+  .stat{padding:20px}
+  .stat-num{font-size:38px;letter-spacing:-2px}
+  .stat-lbl{font-size:9px}
+
+  /* chapter break — 2 col layout */
+  .ch-layout{display:grid;grid-template-columns:1fr 1.6fr;gap:0 48px;align-items:center}
+  .ch-left{display:flex;flex-direction:column}
+  .ch-num{font-size:120px;letter-spacing:-8px;line-height:.85;margin-bottom:0}
+  .ch-title{font-size:clamp(26px,2.8vw,40px);margin-bottom:14px}
+  .ch-desc{font-size:12px;line-height:2}
+  .ch-tags{margin-bottom:28px}
+
+  /* items */
+  .item-name{font-size:13.5px}
+  .item-desc{font-size:10.5px}
+  .item-dalil-inner{font-size:10px}
+
+  /* safe grid 3-col */
+  .safe-grid{grid-template-columns:1fr 1fr 1fr}
+  .safe-name{font-size:12px}
+  .safe-desc{font-size:9.5px}
+
+  /* val */
+  .val-key{font-size:15px}
+  .val-sub{font-size:10px}
+
+  /* closing */
+  .close-big{font-size:clamp(28px,3vw,48px)}
+  .contact-links{flex-direction:row;flex-wrap:wrap;gap:10px}
+  .contact-link{flex:1;min-width:160px}
+
+  /* onboarding */
+  .ob-box{max-width:400px;padding:36px}
+  .ob-title{font-size:14px}
+  .ob-desc{font-size:11px}
+  .ob-row{font-size:10.5px;padding:12px 16px}
+
+  /* scroll pill bigger */
+  .scroll-pill span{font-size:8px;padding:5px 14px}
+}
+
+/* ── Ultrawide 1440px+ ── */
+@media(min-width:1440px){
+  .slide-inner{max-width:960px}
+  .hero-title{font-size:clamp(52px,4vw,72px)}
+  .ch-num{font-size:140px;letter-spacing:-10px}
+}
+</style>
+</head>
+<body>
+
+<div class="bg-grid"></div>
+<div class="bg-glow" id="bg-glow"></div>
+<div id="amb-overlay"></div>
+<div class="bg-grain"></div>
+<div class="bg-vignette"></div>
+
+<div id="flash"></div>
+<div id="progress"></div>
+<div id="copy-toast">✓ Disalin ke clipboard</div>
+
+<div id="top-bar">
+  <div id="breadcrumb"><span class="bc-ch">Fikih Puasa</span></div>
+  <div id="kb-hint">
+    <span class="kb-key">↑↓</span><span class="kb-key">←→</span><span style="font-size:8px;color:var(--t4);letter-spacing:1px">NAVIGATE</span>
+  </div>
+  <div id="slide-counter"><b>1</b>&thinsp;/&thinsp;10</div>
+</div>
+
+<div id="stage">
+
+  <!-- S0: HERO -->
+  <div class="slide active" data-ch="0" data-bc="Fikih Puasa">
+    <div class="slide-inner"><div class="slide-wrap">
+      <div class="hero-eyebrow" data-reveal>
+        <div class="hero-line"></div><span class="label">Fikih Ramadan · Edisi 1.0</span>
+      </div>
+      <h1 class="hero-title" data-reveal>Fikih Puasa<span class="hero-accent">Klasifikasi Pembatal</span></h1>
+      <p class="hero-desc" data-reveal>Menahan diri dari pembatal sejak terbit fajar shadiq<br>hingga terbenam matahari, disertai niat ibadah.</p>
+      <div class="hero-source" data-reveal><div class="hero-dot"></div>Bulughul Maram &amp; Zadul Mustaqni' — Syarah Dr. Abdul Muhsin Al-Qasim</div>
+      <div class="hero-creator" data-reveal>
+        <span class="hero-creator-label">Kreator</span>
+        <span class="hero-creator-handle"><span>@</span>ahmadassayyaaf</span>
+      </div>
+      <button class="hero-cta" data-reveal data-magnet onclick="navigate(1)">
+        Mulai Belajar
+        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+      </button>
+    </div></div>
+  </div>
+
+  <!-- S1: GAMBARAN UMUM -->
+  <div class="slide" data-ch="0" data-bc="Gambaran Umum">
+    <div class="slide-inner"><div class="slide-wrap">
+      <div class="overview-intro glass" data-reveal>
+        Materi ini membahas <b>8 hal</b> yang membatalkan puasa berdasarkan dalil yang kuat,
+        <b>6 tindakan</b> yang sering dikhawatirkan namun terbukti tidak membatalkan,
+        serta <b>3 syarat</b> yang harus hadir bersamaan agar suatu pembatal dinyatakan berlaku.
+      </div>
+      <div class="stats-grid">
+        <div class="stat glass" data-reveal><div class="stat-num blue" data-target="8">0</div><div class="stat-lbl">Total<br>Pembatal</div></div>
+        <div class="stat glass" data-reveal><div class="stat-num" data-target="6">0</div><div class="stat-lbl">Tidak<br>Membatalkan</div></div>
+        <div class="stat glass" data-reveal><div class="stat-num" data-target="3">0</div><div class="stat-lbl">Syarat<br>Berlaku</div></div>
+      </div>
+      <div class="def-card glass" data-reveal>
+        <div class="label def-label">// definisi puasa</div>
+        <p class="def-text"><b>Puasa</b> adalah menahan diri dari segala pembatal yang telah ditetapkan syariat, dimulai sejak <b>terbit fajar shadiq</b> hingga <b>terbenam matahari</b>, disertai <b>niat ibadah</b> kepada Allah ﷻ.</p>
+      </div>
+    </div></div>
+  </div>
+
+  <!-- S2: CHAPTER 01 -->
+  <div class="slide" data-ch="1" data-bc="Pembatal Puasa">
+    <div class="slide-inner"><div class="slide-wrap">
+    <div class="ch-layout">
+      <div class="ch-left">
+        <div class="ch-num" data-reveal>01</div>
+      </div>
+      <div>
+        <div class="ch-title" data-reveal data-type="Pembatal Puasa"></div>
+        <div class="ch-desc" data-reveal>Delapan hal yang membatalkan puasa, dibagi dua: sesuatu yang masuk ke tubuh, dan sesuatu yang keluar dari tubuh.</div>
+        <div class="ch-tags" data-reveal>
+          <span class="tag tag-blue">A · Ma Yadkhulu</span>
+          <span class="tag tag-muted">B · Ma Yakhruju</span>
+        </div>
+        <button class="ch-next" data-reveal data-magnet onclick="navigate(1)">Lihat Pembatal <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg></button>
+      </div>
+    </div>
+    </div></div>
+  </div>
+
+  <!-- S3: KAT A -->
+  <div class="slide" data-ch="1" data-bc="Pembatal Puasa › Kat A">
+    <div class="slide-inner"><div class="slide-wrap">
+      <div class="sec-head" data-reveal><span class="sec-n">01</span><span class="sec-t">Pembatal Puasa</span><div class="sec-rule"></div></div>
+      <div class="cat-head" data-reveal><span class="tag tag-blue">Kategori A</span><span class="cat-desc">Ma Yadkhulu — Sesuatu yang Masuk</span></div>
+      <div class="hint-bar" data-reveal><svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M12 2a10 10 0 100 20A10 10 0 0012 2z"/></svg>Ketuk item untuk lihat dalil</div>
+      <div class="items-card glass" data-reveal>
+        <div class="item" onclick="toggleItem(this)">
+          <div class="item-n">01</div>
+          <div><div class="item-name">Makan &amp; Minum</div><div class="item-desc">Masuknya benda atau cairan ke lambung melalui mulut secara sengaja.</div>
+          <div class="item-dalil"><div class="item-dalil-inner"><span class="dl-lbl">// Dalil</span><p>"Barangsiapa lupa lalu makan atau minum, hendaklah ia menyempurnakan puasanya." — HR. Bukhari &amp; Muslim</p></div></div></div>
+          <div class="item-right"><div class="item-badge">BATAL</div><div class="item-chevron"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg></div></div>
+        </div>
+        <div class="item" onclick="toggleItem(this)">
+          <div class="item-n">02</div>
+          <div><div class="item-name">Suntikan Nutrisi</div><div class="item-desc">Infus atau vitamin yang berfungsi sebagai pengganti makanan.</div>
+          <div class="item-dalil"><div class="item-dalil-inner"><span class="dl-lbl">// Catatan Ulama</span><p>Diqiyaskan dengan makan &amp; minum karena menggantikan fungsi asupan nutrisi — mayoritas ulama kontemporer.</p></div></div></div>
+          <div class="item-right"><div class="item-badge">BATAL</div><div class="item-chevron"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg></div></div>
+        </div>
+        <div class="item" onclick="toggleItem(this)">
+          <div class="item-n">03</div>
+          <div><div class="item-name">Obat Hidung (Sa'ut)</div><div class="item-desc">Cairan dihirup melalui hidung hingga mencapai tenggorokan.</div>
+          <div class="item-dalil"><div class="item-dalil-inner"><span class="dl-lbl">// Dalil</span><p>"Sempurnakanlah istinsyaq, kecuali jika kamu berpuasa." — HR. Abu Dawud, Tirmidzi, Nasai, Ibnu Majah</p></div></div></div>
+          <div class="item-right"><div class="item-badge">BATAL</div><div class="item-chevron"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg></div></div>
+        </div>
+        <div class="item" onclick="toggleItem(this)">
+          <div class="item-n">04</div>
+          <div><div class="item-name">Input Rongga Lain</div><div class="item-desc">Memasukkan benda ke perut melalui lubang terbuka — kecuali saluran urin (Ihlil).</div>
+          <div class="item-dalil"><div class="item-dalil-inner"><span class="dl-lbl">// Catatan Fiqh</span><p>Mencakup supositoria dan enema. Ihlil dikecualikan karena tidak terhubung langsung ke lambung.</p></div></div></div>
+          <div class="item-right"><div class="item-badge">BATAL</div><div class="item-chevron"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg></div></div>
+        </div>
+      </div>
+      <div class="scroll-pill"><span>↓ geser untuk lihat semua</span></div>
+    </div></div>
+  </div>
+
+  <!-- S4: KAT B -->
+  <div class="slide" data-ch="1" data-bc="Pembatal Puasa › Kat B">
+    <div class="slide-inner"><div class="slide-wrap">
+      <div class="sec-head" data-reveal><span class="sec-n">01</span><span class="sec-t">Pembatal Puasa</span><div class="sec-rule"></div></div>
+      <div class="cat-head" data-reveal><span class="tag tag-muted">Kategori B</span><span class="cat-desc">Ma Yakhruju — Sesuatu yang Keluar</span></div>
+      <div class="hint-bar" data-reveal><svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M12 2a10 10 0 100 20A10 10 0 0012 2z"/></svg>Ketuk item untuk lihat dalil</div>
+      <div class="items-card glass" data-reveal>
+        <div class="item" onclick="toggleItem(this)">
+          <div class="item-n">01</div>
+          <div><div class="item-name">Hubungan Seksual (Jima')</div><div class="item-desc">Pembatal terberat — wajib qada dan kafarat.</div>
+          <div class="kafarat-box"><b>Kafarat (berurutan):</b> Memerdekakan budak → Puasa 2 bulan berturut-turut → Beri makan 60 miskin</div>
+          <div class="item-dalil"><div class="item-dalil-inner"><span class="dl-lbl">// Dalil</span><p>Sahabat yang menjimak istrinya di siang Ramadan — Nabi ﷺ mewajibkan kafarat berat. HR. Bukhari &amp; Muslim</p></div></div></div>
+          <div class="item-right"><div class="item-badge crit">KAFARAT</div><div class="item-chevron"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg></div></div>
+        </div>
+        <div class="item" onclick="toggleItem(this)">
+          <div class="item-n">02</div>
+          <div><div class="item-name">Istimna' / Mubasyarah</div><div class="item-desc">Keluar mani karena onani atau persentuhan fisik yang disengaja.</div>
+          <div class="item-dalil"><div class="item-dalil-inner"><span class="dl-lbl">// Catatan Fiqh</span><p>Hanya membatalkan jika keluar mani. Bersentuhan tanpa keluar mani tidak membatalkan — jumhur ulama.</p></div></div></div>
+          <div class="item-right"><div class="item-badge">BATAL</div><div class="item-chevron"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg></div></div>
+        </div>
+        <div class="item" onclick="toggleItem(this)">
+          <div class="item-n">03</div>
+          <div><div class="item-name">Muntah Sengaja (Istiqa')</div><div class="item-desc">Sengaja memancing atau menginduksi muntah.</div>
+          <div class="item-dalil"><div class="item-dalil-inner"><span class="dl-lbl">// Dalil</span><p>"Barangsiapa sengaja muntah, wajib qada." — HR. Abu Dawud, Tirmidzi, Ibnu Majah</p></div></div></div>
+          <div class="item-right"><div class="item-badge">BATAL</div><div class="item-chevron"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg></div></div>
+        </div>
+        <div class="item" onclick="toggleItem(this)">
+          <div class="item-n">04</div>
+          <div><div class="item-name">Bekam (Hijamah)</div><div class="item-desc">Membatalkan bagi pembekam dan yang dibekam — pendapat Mazhab Hanbali.</div>
+          <div class="item-dalil"><div class="item-dalil-inner"><span class="dl-lbl">// Dalil &amp; Khilaf</span><p>"Batalah puasa pembekam dan yang dibekam." — HR. Abu Dawud. Dinilai mansukh oleh sebagian ulama.</p></div></div></div>
+          <div class="item-right"><div class="item-badge">BATAL*</div><div class="item-chevron"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg></div></div>
+        </div>
+      </div>
+      <div class="scroll-pill"><span>↓ geser untuk lihat semua</span></div>
+    </div></div>
+  </div>
+
+  <!-- S5: CHAPTER 02 -->
+  <div class="slide" data-ch="2" data-bc="Tidak Membatalkan">
+    <div class="slide-inner"><div class="slide-wrap">
+    <div class="ch-layout">
+      <div class="ch-left">
+        <div class="ch-num" data-reveal>02</div>
+      </div>
+      <div>
+        <div class="ch-title" data-reveal data-type="Tidak Membatalkan"></div>
+        <div class="ch-desc" data-reveal>Enam hal yang sering dikhawatirkan namun tidak membatalkan puasa berdasarkan dalil dan kaidah fikih yang sahih.</div>
+        <button class="ch-next" data-reveal data-magnet onclick="navigate(1)">Lihat Daftarnya <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg></button>
+      </div>
+    </div>
+    </div></div>
+  </div>
+
+  <!-- S6: SAFE GRID -->
+  <div class="slide" data-ch="2" data-bc="Tidak Membatalkan › Detail">
+    <div class="slide-inner"><div class="slide-wrap">
+      <div class="sec-head" data-reveal><span class="sec-n">02</span><span class="sec-t">Tidak Membatalkan</span><div class="sec-rule"></div></div>
+      <div class="safe-grid">
+        <div class="safe-item glass" data-reveal><div class="safe-valid">Valid</div><div class="safe-name">Lupa / Tidak Sengaja</div><div class="safe-desc">Makan atau minum karena lupa sedang berpuasa.</div></div>
+        <div class="safe-item glass" data-reveal><div class="safe-valid">Valid</div><div class="safe-name">Debu atau Lalat</div><div class="safe-desc">Masuk ke tenggorokan tanpa disengaja.</div></div>
+        <div class="safe-item glass" data-reveal><div class="safe-valid">Valid</div><div class="safe-name">Tetes Mata / Telinga</div><div class="safe-desc">Bukan lubang yang menuju lambung.</div></div>
+        <div class="safe-item glass" data-reveal><div class="safe-valid">Valid</div><div class="safe-name">Inhaler Asma</div><div class="safe-desc">Berupa uap atau gas, bukan cairan.</div></div>
+        <div class="safe-item glass" data-reveal><div class="safe-valid">Valid</div><div class="safe-name">Suntikan Insulin</div><div class="safe-desc">Non-nutrisi, tidak menggantikan makanan.</div></div>
+        <div class="safe-item glass" data-reveal><div class="safe-valid">Valid</div><div class="safe-name">Mimpi Basah</div><div class="safe-desc">Keluar mani tanpa kesengajaan saat tidur.</div></div>
+      </div>
+    </div></div>
+  </div>
+
+  <!-- S7: CHAPTER 03 -->
+  <div class="slide" data-ch="3" data-bc="Syarat Berlaku">
+    <div class="slide-inner"><div class="slide-wrap">
+    <div class="ch-layout">
+      <div class="ch-left">
+        <div class="ch-num" data-reveal>03</div>
+      </div>
+      <div>
+        <div class="ch-title" data-reveal data-type="Syarat Berlaku"></div>
+        <div class="ch-desc" data-reveal>Tiga syarat yang harus hadir bersamaan. Jika salah satu absen, puasa tetap sah meskipun pembatal terjadi.</div>
+        <button class="ch-next" data-reveal data-magnet onclick="navigate(1)">Lihat Syaratnya <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg></button>
+      </div>
+    </div>
+    </div></div>
+  </div>
+
+  <!-- S8: SYARAT -->
+  <div class="slide" data-ch="3" data-bc="Syarat Berlaku › Detail">
+    <div class="slide-inner"><div class="slide-wrap">
+      <div class="sec-head" data-reveal><span class="sec-n">03</span><span class="sec-t">Syarat Berlaku</span><div class="sec-rule"></div></div>
+      <div class="val-card glass" data-reveal>
+        <div class="val-intro">Puasa <b>hanya batal</b> jika ketiga syarat terpenuhi bersamaan. Jika salah satu absen, puasa <b>tetap sah</b>.</div>
+        <div class="val-row"><div class="val-n">01</div><div><div class="val-key">'Amidan — Sengaja</div><div class="val-sub">Dilakukan atas kemauan sendiri, bukan karena paksaan.</div></div><div class="val-req">Wajib</div></div>
+        <div class="val-row"><div class="val-n">02</div><div><div class="val-key">Dzakiran — Ingat</div><div class="val-sub">Menyadari sepenuhnya bahwa dirinya sedang berpuasa.</div></div><div class="val-req">Wajib</div></div>
+        <div class="val-row"><div class="val-n">03</div><div><div class="val-key">'Aliman — Tahu Hukum</div><div class="val-sub">Mengetahui bahwa perbuatan itu membatalkan — tidak dalam keadaan jahil.</div></div><div class="val-req">Wajib</div></div>
+      </div>
+    </div></div>
+  </div>
+
+  <!-- S9: CLOSING -->
+  <div class="slide" data-ch="4" data-bc="Penutup">
+    <div class="slide-inner"><div class="slide-wrap">
+      <div class="close-big" data-reveal>Semoga bermanfaat<br>di bulan Ramadan.</div>
+      <div class="close-ref" data-reveal>
+        <b>Sumber:</b> Bulughul Maram &amp; Zadul Mustaqni'<br>
+        <b>Syarah:</b> Syaikh Dr. Abdul Muhsin Al-Qasim
+      </div>
+      <div class="contact-card glass" data-reveal>
+        <div class="contact-label">Hubungi Kreator</div>
+        <div class="contact-links">
+          <a class="contact-link" href="https://instagram.com/ahmadassayyaaf" target="_blank" rel="noopener">
+            <div class="contact-link-icon"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg></div>
+            <div class="contact-link-info"><div class="contact-link-platform">Instagram</div><div class="contact-link-handle">@ahmadassayyaaf</div></div>
+            <div class="contact-link-arrow"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg></div>
+          </a>
+          <a class="contact-link" href="https://twitter.com/ahmadassayyaaf" target="_blank" rel="noopener">
+            <div class="contact-link-icon"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z"/></svg></div>
+            <div class="contact-link-info"><div class="contact-link-platform">Twitter / X</div><div class="contact-link-handle">@ahmadassayyaaf</div></div>
+            <div class="contact-link-arrow"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg></div>
+          </a>
+          <div class="contact-link" onclick="copyEmail()">
+            <div class="contact-link-icon"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></div>
+            <div class="contact-link-info"><div class="contact-link-platform">Email</div><div class="contact-link-handle" id="email-display"></div></div>
+            <div class="contact-link-arrow"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg></div>
+          </div>
+        </div>
+      </div>
+      <button class="restart-btn" data-reveal data-magnet onclick="goTo(0)">
+        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"/></svg>
+        Ulangi dari Awal
+      </button>
+    </div></div>
+  </div>
+
+</div><!-- /stage -->
+
+<div id="nav-bar">
+  <button id="btn-prev" class="nav-btn" onclick="navigate(-1)" disabled>
+    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M5 15l7-7 7 7"/></svg>
+    Sebelumnya
+  </button>
+  <div id="nav-dots"></div>
+  <button id="btn-next" class="nav-btn" onclick="navigate(1)">
+    Lanjut
+    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+  </button>
+</div>
+
+<div id="onboarding">
+  <div class="ob-box" onclick="event.stopPropagation()">
+    <div class="ob-eyebrow"><div class="ob-eyebrow-line"></div><span class="label">Panduan Navigasi</span></div>
+    <div class="ob-title">Cara Membaca</div>
+    <div class="ob-desc">Konten disajikan slide per slide sesuai hierarki pembahasan fikih.</div>
+    <div class="ob-methods">
+      <div class="ob-row"><span class="ob-row-n">01</span><span class="ob-key">Scroll ↕</span>&nbsp;atau&nbsp;<span class="ob-key">Swipe</span>&nbsp;untuk navigasi slide</div>
+      <div class="ob-row"><span class="ob-row-n">02</span>Gunakan&nbsp;<span class="ob-key">Tombol</span>&nbsp;di bawah layar</div>
+      <div class="ob-row"><span class="ob-row-n">03</span><span class="ob-key">Tap</span>&nbsp;item untuk buka dalil hadis</div>
+    </div>
+    <button class="ob-cta" id="ob-start">Mulai Membaca →</button>
+  </div>
+</div>
+
+<script>
+/* ═══════════════════════════════════════════════
+   FIKIH PUASA v10 — Haptic Illusion + Micro-Dopamine
+═══════════════════════════════════════════════ */
+const slides = Array.from(document.querySelectorAll('.slide'));
+const TOTAL  = slides.length;
+let cur = 0, busy = false;
+
+const CHAPTERS = [
+  {slides:[0,1]},{slides:[2,3,4]},{slides:[5,6]},{slides:[7,8]},{slides:[9]}
+];
+const chOf = i => CHAPTERS.findIndex(c => c.slides.includes(i));
+
+/* ── Build dots ── */
+const dotsEl = document.getElementById('nav-dots');
+const dotEls = [];
+CHAPTERS.forEach((ch,ci) => {
+  if (ci>0){const s=document.createElement('div');s.className='ndot-sep';dotsEl.appendChild(s);}
+  ch.slides.forEach(si=>{
+    const d=document.createElement('div');d.className='ndot';
+    d.addEventListener('click',()=>goTo(si));
+    dotsEl.appendChild(d);dotEls[si]=d;
+  });
+});
+
+/* ═══ HAPTIC A: Progress Revelation — blur→clear stagger ═══ */
+function revealSlide(slide){
+  const els = slide.querySelectorAll('[data-reveal]');
+  els.forEach((el,i)=>{
+    el.classList.remove('in');
+    clearTimeout(el._rt);
+    el._rt = setTimeout(()=>el.classList.add('in'), 55 + i*65);
+  });
+  // typing effect on chapter titles
+  const typer = slide.querySelector('[data-type]');
+  if(typer) typeTitle(typer, typer.dataset.type, 55 + els.length*30);
+}
+
+/* ═══ HAPTIC A2: Typing Effect ═══ */
+function typeTitle(el, text, delay){
+  el.textContent='';
+  const cur=document.createElement('span');
+  cur.className='ch-cursor';el.appendChild(cur);
+  let i=0;
+  setTimeout(()=>{
+    const iv=setInterval(()=>{
+      if(i<text.length){el.insertBefore(document.createTextNode(text[i]),cur);i++;}
+      else{clearInterval(iv);setTimeout(()=>cur.remove(),1200);}
+    },30);
+  },delay||0);
+}
+
+/* ═══ HAPTIC B: Count-Up with stagger ═══ */
+function runCountUp(slide){
+  slide.querySelectorAll('.stat-num[data-target]').forEach((el,i)=>{
+    const t=+el.dataset.target;
+    setTimeout(()=>{
+      el.textContent='0';let s=0;
+      const iv=setInterval(()=>{
+        s++;el.textContent=Math.round(t*Math.min(s/20,1));
+        if(s>=20){el.textContent=t;clearInterval(iv);}
+      },700/20);
+    },i*90);
+  });
+}
+
+/* ═══ HAPTIC C: Ambient Shift — glow intensity grows with progress ═══ */
+const root = document.documentElement;
+const GLOW_STEPS = [
+  'rgba(74,114,204,0.0)',   // 0
+  'rgba(74,114,204,0.12)',  // 1
+  'rgba(74,114,204,0.20)',  // 2
+  'rgba(74,114,204,0.28)',  // 3
+  'rgba(74,114,204,0.32)',  // 4
+  'rgba(74,114,204,0.36)',  // 5
+  'rgba(74,114,204,0.40)',  // 6
+  'rgba(74,114,204,0.44)',  // 7
+  'rgba(74,114,204,0.48)',  // 8
+  'rgba(74,114,204,0.52)',  // 9
+];
+const ambEl = document.getElementById('amb-overlay');
+const AMB_OPACITIES = [0, 0.04, 0.08, 0.10, 0.13, 0.15, 0.17, 0.19, 0.22, 0.25];
+function updateAmbient(idx){
+  root.style.setProperty('--progress-glow', GLOW_STEPS[idx]||GLOW_STEPS[0]);
+  ambEl.style.opacity = AMB_OPACITIES[idx]||0;
+}
+
+/* ═══ HAPTIC D: Unlock Feedback ═══ */
+const flashEl  = document.getElementById('flash');
+const stageEl  = document.getElementById('stage');
+let audioCtx   = null;
+
+function getAudio(){
+  if(!audioCtx){try{audioCtx=new(window.AudioContext||window.webkitAudioContext)();}catch(e){}}
+  return audioCtx;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   SOLO LEVELING SYSTEM SOUND ENGINE
+   Two modes: 'slide' (within-chapter) | 'chapter' (cross-chapter)
+───────────────────────────────────────────────────────────── */
+function playSysSound(type){
+  const ctx = getAudio();
+  if(!ctx) return;
+  try{
+    // Resume suspended context (autoplay policy)
+    if(ctx.state==='suspended') ctx.resume();
+    const t = ctx.currentTime;
+
+    if(type === 'chapter'){
+      /* ── CHAPTER TRANSITION — dramatic, dark, layered ──
+         Layer 1: Sub-bass thud (rumble)
+         Layer 2: Digital noise burst
+         Layer 3: High ascending sweep
+         Layer 4: System confirm harmonic chord
+      */
+
+      // L1: Sub-bass thud
+      const sub=ctx.createOscillator(), subG=ctx.createGain();
+      sub.type='sine';
+      sub.frequency.setValueAtTime(72, t);
+      sub.frequency.exponentialRampToValueAtTime(35, t+0.28);
+      subG.gain.setValueAtTime(0.22, t);
+      subG.gain.exponentialRampToValueAtTime(0.001, t+0.32);
+      sub.connect(subG); subG.connect(ctx.destination);
+      sub.start(t); sub.stop(t+0.35);
+
+      // L2: Digital noise burst (short white noise hit)
+      const bufSz=ctx.sampleRate*0.06;
+      const buf=ctx.createBuffer(1,bufSz,ctx.sampleRate);
+      const data=buf.getChannelData(0);
+      for(let i=0;i<bufSz;i++) data[i]=(Math.random()*2-1)*0.5;
+      const noise=ctx.createBufferSource();
+      noise.buffer=buf;
+      const nFilt=ctx.createBiquadFilter();
+      nFilt.type='bandpass'; nFilt.frequency.value=2800; nFilt.Q.value=0.8;
+      const nGain=ctx.createGain();
+      nGain.gain.setValueAtTime(0.07, t);
+      nGain.gain.exponentialRampToValueAtTime(0.001, t+0.06);
+      noise.connect(nFilt); nFilt.connect(nGain); nGain.connect(ctx.destination);
+      noise.start(t); noise.stop(t+0.06);
+
+      // L3: High ascending digital sweep
+      const swp=ctx.createOscillator(), swpG=ctx.createGain();
+      swp.type='sawtooth';
+      swp.frequency.setValueAtTime(320, t+0.04);
+      swp.frequency.exponentialRampToValueAtTime(2200, t+0.26);
+      const swpFilt=ctx.createBiquadFilter();
+      swpFilt.type='bandpass'; swpFilt.frequency.value=900; swpFilt.Q.value=1.5;
+      swpG.gain.setValueAtTime(0.0, t);
+      swpG.gain.linearRampToValueAtTime(0.045, t+0.06);
+      swpG.gain.exponentialRampToValueAtTime(0.001, t+0.28);
+      swp.connect(swpFilt); swpFilt.connect(swpG); swpG.connect(ctx.destination);
+      swp.start(t+0.04); swp.stop(t+0.30);
+
+      // L4: System confirm — two-tone harmonic ping
+      [[900,0.18,0.09],[1350,0.20,0.08]].forEach(([freq,delay,vol])=>{
+        const o=ctx.createOscillator(), g=ctx.createGain();
+        o.type='sine'; o.frequency.value=freq;
+        g.gain.setValueAtTime(0, t+delay);
+        g.gain.linearRampToValueAtTime(vol, t+delay+0.012);
+        g.gain.exponentialRampToValueAtTime(0.001, t+delay+0.52);
+        o.connect(g); g.connect(ctx.destination);
+        o.start(t+delay); o.stop(t+delay+0.55);
+      });
+
+    } else {
+      /* ── SLIDE NAVIGATION — crisp system click + digital accent ──
+         Layer 1: Mechanical click (square transient)
+         Layer 2: System confirm tone
+      */
+
+      // L1: Mechanical digital click
+      const clk=ctx.createOscillator(), clkG=ctx.createGain();
+      clk.type='square';
+      clk.frequency.setValueAtTime(380, t);
+      clk.frequency.exponentialRampToValueAtTime(160, t+0.05);
+      const clkFilt=ctx.createBiquadFilter();
+      clkFilt.type='highpass'; clkFilt.frequency.value=180;
+      clkG.gain.setValueAtTime(0.038, t);
+      clkG.gain.exponentialRampToValueAtTime(0.001, t+0.07);
+      clk.connect(clkFilt); clkFilt.connect(clkG); clkG.connect(ctx.destination);
+      clk.start(t); clk.stop(t+0.08);
+
+      // L2: Brief system tone
+      const ton=ctx.createOscillator(), tonG=ctx.createGain();
+      ton.type='sine'; ton.frequency.value=620;
+      tonG.gain.setValueAtTime(0, t+0.01);
+      tonG.gain.linearRampToValueAtTime(0.052, t+0.025);
+      tonG.gain.exponentialRampToValueAtTime(0.001, t+0.14);
+      ton.connect(tonG); tonG.connect(ctx.destination);
+      ton.start(t+0.01); ton.stop(t+0.16);
+    }
+  }catch(e){}
+}
+
+function unlockFeedback(isChapter){
+  flashEl.classList.add('on');
+  setTimeout(()=>flashEl.classList.remove('on'), isChapter?90:65);
+  stageEl.classList.remove('vibe');
+  void stageEl.offsetWidth;
+  stageEl.classList.add('vibe');
+  setTimeout(()=>stageEl.classList.remove('vibe'),100);
+  playSysSound(isChapter?'chapter':'slide');
+}
+
+/* ═══ HAPTIC E: Cursor Magnet Effect ═══ */
+function initMagnets(){
+  document.querySelectorAll('[data-magnet]').forEach(el=>{
+    const PULL=0.28, RANGE=90;
+    el.addEventListener('mousemove',e=>{
+      const r=el.getBoundingClientRect();
+      const cx=r.left+r.width/2, cy=r.top+r.height/2;
+      const dx=e.clientX-cx, dy=e.clientY-cy;
+      const dist=Math.hypot(dx,dy);
+      if(dist<RANGE){
+        const f=(1-dist/RANGE)*PULL;
+        el.style.transform=`translate(${dx*f}px,${dy*f}px)`;
+      }
+    });
+    el.addEventListener('mouseleave',()=>{el.style.transform='';});
+  });
+}
+
+/* ═══ UI UPDATE ═══ */
+function updateUI(){
+  dotEls.forEach((d,i)=>{d.className='ndot'+(i===cur?' active':i<cur?' done':'');});
+  document.getElementById('progress').style.width=(cur/(TOTAL-1)*100)+'%';
+  document.getElementById('slide-counter').innerHTML=`<b>${cur+1}</b>&thinsp;/&thinsp;${TOTAL}`;
+  const parts=(slides[cur].dataset.bc||'Fikih Puasa').split(' › ');
+  document.getElementById('breadcrumb').innerHTML=parts.map((p,i)=>
+    `${i>0?'<span class="bc-sep"> › </span>':''}<span class="${i===parts.length-1?'bc-ch':''}">${p}</span>`
+  ).join('');
+  document.getElementById('btn-prev').disabled=cur===0;
+  document.getElementById('btn-next').disabled=cur===TOTAL-1;
+  updateAmbient(cur);
+  checkOverflow();
+}
+
+function checkOverflow(){
+  const inner=slides[cur].querySelector('.slide-inner');
+  const wrap=slides[cur].querySelector('.slide-wrap');
+  if(!inner||!wrap)return;
+  setTimeout(()=>{
+    wrap.classList.toggle('has-overflow',inner.scrollHeight>inner.clientHeight+6);
+    inner.addEventListener('scroll',()=>{
+      if(inner.scrollHeight-inner.scrollTop<=inner.clientHeight+10)
+        wrap.classList.remove('has-overflow');
+    },{once:true});
+  },120);
+}
+
+/* ═══ CORE NAVIGATE — sequential, zero overlap ═══ */
+function goTo(target){
+  if(busy||target===cur||target<0||target>=TOTAL)return;
+  busy=true;
+
+  const dir=target>cur?1:-1;
+  const isCh=chOf(cur)!==chOf(target);
+  const from=slides[cur],to=slides[target];
+  const exitA=isCh?'ch-exit':dir>0?'fwd-exit':'bwd-exit';
+  const enterA=isCh?'ch-enter':dir>0?'fwd-enter':'bwd-enter';
+  const EXIT_MS=isCh?340:320, ENTER_MS=isCh?520:460;
+
+  unlockFeedback(isCh);
+  from.classList.add(exitA);
+
+  setTimeout(()=>{
+    from.classList.remove('active',exitA);
+    cur=target;
+    updateUI();
+    const inner=to.querySelector('.slide-inner');
+    if(inner)inner.scrollTop=0;
+    if(to.querySelector('.stat-num[data-target]'))runCountUp(to);
+    to.classList.add('active',enterA);
+    // reveal after enter starts settling
+    setTimeout(()=>revealSlide(to),50);
+    setTimeout(()=>{to.classList.remove(enterA);busy=false;},ENTER_MS+16);
+  },EXIT_MS);
+}
+function navigate(dir){goTo(cur+dir);}
+
+/* ═══ INPUT HANDLERS ═══ */
+let wAcc=0,wT=null;
+window.addEventListener('wheel',e=>{
+  const inner=slides[cur].querySelector('.slide-inner');
+  if(inner){
+    const atT=inner.scrollTop<=0;
+    const atB=inner.scrollHeight-inner.scrollTop<=inner.clientHeight+2;
+    if((e.deltaY<0&&!atT)||(e.deltaY>0&&!atB))return;
+  }
+  e.preventDefault();
+  wAcc+=e.deltaY;clearTimeout(wT);wT=setTimeout(()=>wAcc=0,300);
+  if(Math.abs(wAcc)>60){navigate(wAcc>0?1:-1);wAcc=0;}
+},{passive:false});
+
+let tY=0,tLock=false;
+window.addEventListener('touchstart',e=>{tY=e.touches[0].clientY;tLock=false;},{passive:true});
+window.addEventListener('touchmove',e=>{
+  if(tLock)return;
+  const inner=slides[cur].querySelector('.slide-inner');
+  if(inner&&inner.scrollHeight>inner.clientHeight+2){
+    const dy=tY-e.touches[0].clientY;
+    const atT=inner.scrollTop<=0,atB=inner.scrollHeight-inner.scrollTop<=inner.clientHeight+2;
+    if(!((dy<0&&atT)||(dy>0&&atB))){tLock=true;return;}
+  }
+},{passive:true});
+window.addEventListener('touchend',e=>{
+  if(tLock)return;
+  const d=tY-e.changedTouches[0].clientY;
+  if(Math.abs(d)>44)navigate(d>0?1:-1);
+},{passive:true});
+
+window.addEventListener('keydown',e=>{
+  if(['ArrowDown','ArrowRight','PageDown'].includes(e.key)){e.preventDefault();navigate(1);}
+  if(['ArrowUp','ArrowLeft','PageUp'].includes(e.key)){e.preventDefault();navigate(-1);}
+  if(e.key==='Home')goTo(0);if(e.key==='End')goTo(TOTAL-1);
+});
+
+/* ── Accordion ── */
+function toggleItem(el){
+  const was=el.classList.contains('open');
+  el.closest('.items-card').querySelectorAll('.item.open').forEach(i=>i.classList.remove('open'));
+  if(!was)el.classList.add('open');
+  setTimeout(checkOverflow,400);
+}
+
+/* ── Copy email ── */
+function copyEmail(){
+  const email=['ahmadassayyaaf','proton.me'].join('@');
+  navigator.clipboard.writeText(email).catch(()=>{});
+  const t=document.getElementById('copy-toast');
+  t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200);
+}
+
+/* ── Contact ripple ── */
+document.querySelectorAll('.contact-link').forEach(el=>{
+  el.addEventListener('mousemove',e=>{
+    const r=el.getBoundingClientRect();
+    el.style.setProperty('--rx',((e.clientX-r.left)/r.width*100)+'%');
+    el.style.setProperty('--ry',((e.clientY-r.top)/r.height*100)+'%');
+  });
+});
+
+/* ── Onboarding ── */
+const ob=document.getElementById('onboarding');
+function closeOb(){
+  ob.classList.add('hidden');
+  // unlock AudioContext on first user gesture
+  const ctx = getAudio();
+  if(ctx && ctx.state==='suspended') ctx.resume();
+  setTimeout(()=>ob.remove(),400);
+}
+document.getElementById('ob-start').addEventListener('click',closeOb);
+ob.addEventListener('click',e=>{if(e.target===ob)closeOb();});
+
+/* ═══ INIT ═══ */
+document.getElementById('email-display').textContent=['ahmadassayyaaf','proton.me'].join('@');
+initMagnets();
+revealSlide(slides[0]);
+updateUI();
+</script>
+</body>
+</html>
