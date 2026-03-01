@@ -344,7 +344,20 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:var(--mono);backgro
 .stat-lbl{font-size:8px;font-weight:500;letter-spacing:1.5px;text-transform:uppercase;color:var(--t3);line-height:1.4}
 .def-card{border-left:2px solid var(--blue);padding:16px 20px}
 .def-label{margin-bottom:8px}
-.def-text{font-size:11px;font-weight:300;color:var(--t2);line-height:2.1}
+.def-text{font-size:11px;font-weight:300;color:var(--t2);line-height:2.0}
+.def-section{margin-bottom:10px}
+.def-section:last-of-type{margin-bottom:8px}
+.def-tag{
+  display:inline-block;font-family:var(--mono);font-size:7px;font-weight:700;
+  letter-spacing:1.6px;text-transform:uppercase;color:var(--blue);
+  border:1px solid rgba(74,114,204,.3);border-radius:3px;
+  padding:1px 6px;margin-bottom:5px;
+}
+.def-note{
+  font-size:9px;font-family:var(--mono);color:var(--t4);
+  border-top:1px solid rgba(74,114,204,.12);padding-top:8px;margin-top:2px;
+  letter-spacing:.2px;
+}
 .def-text b{color:var(--t1);font-weight:600}
 
 /* ═══ CHAPTER BREAK ═══ */
@@ -626,6 +639,10 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:var(--mono);backgro
   border:1px solid var(--bbd);border-radius:var(--rsm);font-size:9.5px;font-weight:300;
   color:var(--t2);line-height:1.8}
 .kafarat-box b{color:var(--t1);font-weight:600}
+.badge-legend{
+  font-size:8.5px;font-family:var(--mono);color:var(--t4);
+  padding:6px 14px 2px;letter-spacing:.3px;
+}
 
 /* ═══ SAFE GRID ═══ */
 .safe-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
@@ -936,18 +953,27 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:var(--mono);backgro
   <div class="slide" data-ch="0" data-bc="Gambaran Umum">
     <div class="slide-inner"><div class="slide-wrap">
       <div class="overview-intro glass" data-reveal>
-        Materi ini membahas <b>8 hal</b> yang membatalkan puasa berdasarkan dalil yang kuat,
-        <b>6 tindakan</b> yang sering dikhawatirkan namun terbukti tidak membatalkan,
-        serta <b>3 syarat</b> yang harus hadir bersamaan agar suatu pembatal dinyatakan berlaku.
+        Materi ini membahas klasifikasi pembatal puasa yang meliputi hal-hal yang masuk ke tubuh (seperti makan, minum, dan infus nutrisi) serta hal-hal yang keluar dari tubuh (seperti jima', muntah sengaja, dan bekam). Terdapat pula penjelasan mengenai nawazil medis (isu modern) seperti inhaler dan suntikan medis yang terbukti tidak membatalkan puasa. Seluruh pembatal tersebut hanya berlaku jika memenuhi 3 syarat utama secara bersamaan: Al-'Ilmu (tahu hukumnya), Adz-Dzikru (ingat sedang puasa), dan Al-Ikhtiyar (atas kemauan sendiri/tidak dipaksa).
       </div>
       <div class="stats-grid">
-        <div class="stat glass" data-reveal><div class="stat-num blue" data-target="8">0</div><div class="stat-lbl">Total<br>Pembatal</div></div>
-        <div class="stat glass" data-reveal><div class="stat-num" data-target="6">0</div><div class="stat-lbl">Tidak<br>Membatalkan</div></div>
+        <div class="stat glass" data-reveal><div class="stat-num blue" data-target="9">0</div><div class="stat-lbl">Total<br>Pembatal</div></div>
+        <div class="stat glass" data-reveal><div class="stat-num" data-target="9">0</div><div class="stat-lbl">Tidak<br>Membatalkan</div></div>
         <div class="stat glass" data-reveal><div class="stat-num" data-target="3">0</div><div class="stat-lbl">Syarat<br>Berlaku</div></div>
       </div>
       <div class="def-card glass" data-reveal>
         <div class="label def-label">// definisi puasa</div>
-        <p class="def-text"><b>Puasa</b> adalah menahan diri dari segala pembatal yang telah ditetapkan syariat, dimulai sejak <b>terbit fajar shadiq</b> hingga <b>terbenam matahari</b>, disertai <b>niat ibadah</b> kepada Allah ﷻ.</p>
+
+        <div class="def-section">
+          <span class="def-tag">Lughatan</span>
+          <p class="def-text"><b>Ash-shiyam</b> — menahan diri (<em>al-imsak</em>), meninggalkan (<em>at-tark</em>), mencegah diri (<em>al-imtina'</em>). Dalil: QS Maryam: 26 — kata "puasa" digunakan untuk makna menahan diri dari berbicara.</p>
+        </div>
+
+        <div class="def-section">
+          <span class="def-tag">Syar'an</span>
+          <p class="def-text"><b>Al-imsak bi niyyah</b> — menahan diri disertai niat ibadah, pada <b>waktu tertentu</b> (fajar shadiq → ghurub), oleh <b>orang tertentu</b> (Muslim, berakal, baligh, mampu, mukim, suci), dari <b>hal-hal tertentu</b> yang membatalkan.</p>
+        </div>
+
+        <div class="def-note">Niat puasa wajib: malam hari sebelum fajar (<em>tabyitun niyah</em>)</div>
       </div>
     </div></div>
   </div>
@@ -961,7 +987,7 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:var(--mono);backgro
       </div>
       <div>
         <div class="ch-title" data-reveal data-type="Pembatal Puasa"></div>
-        <div class="ch-desc" data-reveal>Delapan hal yang membatalkan puasa, dibagi dua: sesuatu yang masuk ke tubuh, dan sesuatu yang keluar dari tubuh.</div>
+        <div class="ch-desc" data-reveal>Sembilan hal yang membatalkan puasa, dibagi dua: sesuatu yang masuk ke tubuh, dan sesuatu yang keluar dari tubuh.</div>
         <div class="ch-tags" data-reveal>
           <span class="tag tag-blue">A · Ma Yadkhulu</span>
           <span class="tag tag-muted">B · Ma Yakhruju</span>
@@ -1151,6 +1177,7 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:var(--mono);backgro
                     <ul>
                       <li><strong>Prinsip al-Jawf:</strong> Kitab ini menjadikan konsep <strong>al-jawf (rongga dalam tubuh)</strong> sebagai inti pembatalan. Segala zat yang mencapai al-jawf melalui jalur mana pun — termasuk dubur atau rongga tubuh lainnya — dihukumi membatalkan puasa.</li>
                       <li><strong>Supositoria dan Enema:</strong> Obat yang dimasukkan melalui dubur (suppositoria) dan cairan yang disemprotkan ke usus besar (enema) membatalkan puasa karena keduanya memasukkan materi ke rongga dalam tubuh.</li>
+                      <li><strong>Selang Makanan (<em>Unbub</em>):</strong> Penggunaan selang makanan yang dipasang langsung ke lambung atau melalui tenggorokan (<em>nasogastric tube</em>) juga membatalkan puasa, karena memasukkan materi secara langsung ke al-jawf melalui prosedur yang disengaja.</li>
                       <li><strong>Pengecualian Ihlil:</strong> Memasukkan benda ke lubang kemaluan laki-laki (<em>ihlil</em>) <strong>tidak membatalkan</strong> menurut qaul mu'tamad, karena salurannya tidak terhubung ke al-jawf (lambung/usus).</li>
                     </ul>
                   </div>
@@ -1391,8 +1418,8 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:var(--mono);backgro
                     <span class="dl-source">// Syaikh Dr. Abdul Muhsin al-Qasim</span>
                     <ul>
                       <li><strong>Pendapat Syaikh:</strong> Mengikuti madzhab Hanbali — bekam <strong>membatalkan puasa</strong>, baik pembekam maupun yang dibekam. Beliau menguatkan hadits "afthara al-hajim" sebagai dalil yang valid dan tidak mansukh.</li>
-                      <li><strong>Jawab atas Hadits Bukhari:</strong> Syaikh menjelaskan bahwa hadits "Nabi berbekam saat puasa" tidak menasakh, karena kemungkinan itu terjadi dalam kondisi safar (perjalanan) di mana Nabi dibolehkan berbuka — atau itu adalah puasa sunnah yang boleh dibatalkan.</li>
-                      <li><strong>Fatwa Praktis:</strong> Beliau menyarankan bagi yang membutuhkan bekam untuk melakukannya di <strong>malam hari saja</strong> selama Ramadan. Jika darurat siang hari, batalkan puasa dan qada — jangan menanggung khilaf tanpa kebutuhan.</li>
+                      <li><strong>Tarjih Kritis — Bekam Modern (Pompa Vakum):</strong> Syaikh memberikan <em>takhrij</em> penting: pembekam modern yang menggunakan <strong>pompa vakum (bukan sedotan mulut)</strong> <strong>tidak membatalkan puasanya</strong>. 'Illah (sebab) batalnya puasa bagi <em>al-hajim</em> dalam hadits adalah risiko tertelannya darah saat menghisap — dan 'illah ini telah hilang pada bekam modern yang menggunakan alat mekanis.</li>
+                      <li><strong>Fatwa Praktis:</strong> Yang dibekam (<em>al-mahjum</em>) tetap batal karena keluarnya darah dalam jumlah besar melemahkan fisik secara nyata. Dianjurkan melakukan bekam di <strong>malam hari</strong> selama Ramadan jika memungkinkan, atau membatalkan dan mengqada jika darurat di siang hari.</li>
                     </ul>
                   </div>
 
@@ -1412,7 +1439,61 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:var(--mono);backgro
               </div></div></div></div>
           <div class="item-right"><div class="item-badge">BATAL*</div><div class="item-chevron"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg></div></div>
         </div>
+
+        <div class="item" onclick="openSystem(this)">
+          <div class="item-n">05</div>
+          <div><div class="item-name">Darah Haid &amp; Nifas</div><div class="item-desc">Keluarnya darah haid atau nifas secara otomatis membatalkan puasa wanita.</div>
+          <div class="item-dalil"><div class="item-dalil-inner" style="padding:0;overflow:hidden"><div class="dalil-deck" data-deck>
+                <div class="dalil-track">
+
+                  <!-- Card 1: Zad al-Mustaqni' -->
+                  <div class="dalil-card">
+                    <span class="dl-source">// Zad al-Mustaqni'</span>
+                    <ul>
+                      <li><strong>Hukum Dasar:</strong> Keluarnya darah haid dan nifas merupakan pembatal puasa yang disepakati (<em>mujma' 'alaih</em>). Wanita yang mengalaminya wajib menghentikan puasa dan mengqada sejumlah hari yang ditinggalkan setelah Ramadan.</li>
+                      <li><strong>Walaupun Sesaat:</strong> Jika darah haid keluar sesaat sebelum matahari terbenam — meski hanya beberapa menit sebelum buka puasa — puasa hari itu batal dan wajib diqada. Kesempurnaan puasa mensyaratkan hari itu bebas dari haid hingga terbenamnya matahari.</li>
+                      <li><strong>Berbeda dari Pembatal Lain:</strong> Haid dan nifas membatalkan puasa tanpa syarat <em>kesengajaan</em> (<em>al-ikhtiyar</em>) maupun <em>pengetahuan</em> (<em>al-'ilmu</em>), karena ini adalah kondisi fisiologis yang terjadi di luar kehendak.</li>
+                    </ul>
+                  </div>
+
+                  <!-- Card 2: Buloogh al-Maram -->
+                  <div class="dalil-card">
+                    <span class="dl-source">// Buloogh al-Maram</span>
+                    <ul>
+                      <li><strong>Dalil Hadits:</strong> Nabi ﷺ bersabda: <em>"Bukankah jika wanita haid ia tidak shalat dan tidak berpuasa?"</em> — HR. Bukhari &amp; Muslim. Ini adalah dalil sharih (eksplisit) bahwa haid menjadi penghalang sah untuk puasa, bukan sekadar rukhshah.</li>
+                      <li><strong>Nifas Disamakan:</strong> Nifas (darah pasca-melahirkan) diqiyaskan dengan haid dalam seluruh hukumnya termasuk larangan puasa, karena keduanya sama dalam sifat, asal, dan dampak syariatnya.</li>
+                      <li><strong>Kewajiban Qada:</strong> Keduanya wajib mengqada hari-hari yang ditinggalkan — berbeda dari shalat yang tidak perlu diqada. Ini menunjukkan bahwa puasa adalah ibadah yang bisa diganti setelah Ramadan, tidak gugur sama sekali.</li>
+                    </ul>
+                  </div>
+
+                  <!-- Card 3: Syaikh Dr. Abdul Muhsin al-Qasim -->
+                  <div class="dalil-card">
+                    <span class="dl-source">// Syaikh Dr. Abdul Muhsin al-Qasim</span>
+                    <ul>
+                      <li><strong>Tarikh Keluarnya Darah:</strong> Syaikh menegaskan bahwa yang menjadi patokan adalah <strong>waktu keluarnya darah</strong>, bukan waktu dirasakannya. Jika darah sudah keluar di siang hari — meski baru diketahui sore hari — maka puasa hari itu batal sejak darah keluar.</li>
+                      <li><strong>Jika Darah Keluar Setelah Maghrib:</strong> Wanita yang suci saat siang hari penuh kemudian mengalami haid setelah terbenam matahari, puasanya tetap sah. Ia tidak wajib qada hari itu.</li>
+                      <li><strong>Wanita yang Haid Menahan Diri di Siang Hari:</strong> Beliau menjelaskan bahwa wanita yang haid tidak disyariatkan untuk <em>imsak</em> (menahan makan/minum) di siang Ramadan, karena puasanya memang tidak sah. Namun ia tetap dianjurkan menjaga adab bulan Ramadan.</li>
+                    </ul>
+                  </div>
+
+                </div>
+                <div class="dalil-nav">
+                  <button class="dalil-nav-btn" data-deck-prev>← Prev</button>
+                  <div style="display:flex;flex-direction:column;align-items:center;gap:3px">
+                    <div class="dalil-nav-dots">
+                      <div class="dalil-dot active"></div>
+                      <div class="dalil-dot"></div>
+                      <div class="dalil-dot"></div>
+                    </div>
+                    <span class="dalil-counter">1 / 3</span>
+                  </div>
+                  <button class="dalil-nav-btn" data-deck-next>Next →</button>
+                </div>
+              </div></div></div></div>
+          <div class="item-right"><div class="item-badge">BATAL</div><div class="item-chevron"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg></div></div>
+        </div>
       </div>
+        <div class="badge-legend" data-reveal>* Ada khilaf mu'tabar atau catatan tambahan di System Panel</div>
       <div class="scroll-pill"><span>↓ geser untuk lihat semua</span></div>
     </div></div>
   </div>
@@ -1426,7 +1507,7 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:var(--mono);backgro
       </div>
       <div>
         <div class="ch-title" data-reveal data-type="Tidak Membatalkan"></div>
-        <div class="ch-desc" data-reveal>Enam hal yang sering dikhawatirkan namun tidak membatalkan puasa berdasarkan dalil dan kaidah fikih yang sahih.</div>
+        <div class="ch-desc" data-reveal>Sembilan hal yang sering dikhawatirkan namun tidak membatalkan puasa berdasarkan dalil dan kaidah fikih yang sahih.</div>
         <button class="ch-next" data-reveal data-magnet onclick="navigate(1)">Lihat Daftarnya <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg></button>
       </div>
     </div>
@@ -1440,11 +1521,15 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:var(--mono);backgro
       <div class="safe-grid">
         <div class="safe-item glass" data-reveal><div class="safe-valid">Valid</div><div class="safe-name">Lupa / Tidak Sengaja</div><div class="safe-desc">Makan atau minum karena lupa sedang berpuasa.</div></div>
         <div class="safe-item glass" data-reveal><div class="safe-valid">Valid</div><div class="safe-name">Debu atau Lalat</div><div class="safe-desc">Masuk ke tenggorokan tanpa disengaja.</div></div>
-        <div class="safe-item glass" data-reveal><div class="safe-valid">Valid</div><div class="safe-name">Tetes Mata / Telinga</div><div class="safe-desc">Bukan lubang yang menuju lambung.</div></div>
-        <div class="safe-item glass" data-reveal><div class="safe-valid">Valid</div><div class="safe-name">Inhaler Asma</div><div class="safe-desc">Berupa uap atau gas, bukan cairan.</div></div>
+        <div class="safe-item glass" data-reveal><div class="safe-valid">Valid</div><div class="safe-name">Tetes Mata / Telinga</div><div class="safe-desc">Bukan lubang alami menuju lambung — tidak batal meski kadang rasanya mencapai tenggorokan.</div></div>
+        <div class="safe-item glass" data-reveal><div class="safe-valid">Valid</div><div class="safe-name">Inhaler Asma (Bakhakh)</div><div class="safe-desc">Menuju paru-paru, bukan lambung — meski masuk lewat mulut atau hidung.</div></div>
         <div class="safe-item glass" data-reveal><div class="safe-valid">Valid</div><div class="safe-name">Suntikan Insulin</div><div class="safe-desc">Non-nutrisi, tidak menggantikan makanan.</div></div>
         <div class="safe-item glass" data-reveal><div class="safe-valid">Valid</div><div class="safe-name">Mimpi Basah</div><div class="safe-desc">Keluar mani tanpa kesengajaan saat tidur.</div></div>
+        <div class="safe-item glass" data-reveal><div class="safe-valid">Valid</div><div class="safe-name">Mencicipi Makanan</div><div class="safe-desc">Makruh, namun tidak batal selama tidak ada yang tertelan ke kerongkongan.</div></div>
+        <div class="safe-item glass" data-reveal><div class="safe-valid">Valid</div><div class="safe-name">Siwak &amp; Pasta Gigi</div><div class="safe-desc">Tidak membatalkan selama zat yang ada tidak sengaja ditelan.</div></div>
+        <div class="safe-item glass" data-reveal><div class="safe-valid">Valid</div><div class="safe-name">Celak (Al-Kuuhl)</div><div class="safe-desc">Matan Zad menyebutnya membatalkan, namun tarjih Syaikh: tidak membatalkan — mata bukan lubang alami menuju lambung.</div></div>
       </div>
+      <div class="scroll-pill"><span>↓ geser untuk lihat semua</span></div>
     </div></div>
   </div>
 
@@ -1470,9 +1555,9 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:var(--mono);backgro
       <div class="sec-head" data-reveal><span class="sec-n">03</span><span class="sec-t">Syarat Berlaku</span><div class="sec-rule"></div></div>
       <div class="val-card glass" data-reveal>
         <div class="val-intro">Puasa <b>hanya batal</b> jika ketiga syarat terpenuhi bersamaan. Jika salah satu absen, puasa <b>tetap sah</b>.</div>
-        <div class="val-row"><div class="val-n">01</div><div><div class="val-key">'Amidan — Sengaja</div><div class="val-sub">Dilakukan atas kemauan sendiri, bukan karena paksaan.</div></div><div class="val-req">Wajib</div></div>
-        <div class="val-row"><div class="val-n">02</div><div><div class="val-key">Dzakiran — Ingat</div><div class="val-sub">Menyadari sepenuhnya bahwa dirinya sedang berpuasa.</div></div><div class="val-req">Wajib</div></div>
-        <div class="val-row"><div class="val-n">03</div><div><div class="val-key">'Aliman — Tahu Hukum</div><div class="val-sub">Mengetahui bahwa perbuatan itu membatalkan — tidak dalam keadaan jahil.</div></div><div class="val-req">Wajib</div></div>
+        <div class="val-row"><div class="val-n">01</div><div><div class="val-key">Al-'Ilmu — Tahu</div><div class="val-sub">Mengetahui bahwa ia sedang berpuasa dan tahu bahwa perbuatan itu dilarang.</div></div><div class="val-req">Wajib</div></div>
+        <div class="val-row"><div class="val-n">02</div><div><div class="val-key">Adz-Dzikru — Ingat</div><div class="val-sub">Tidak dalam keadaan lupa. Makan/minum karena lupa tidak membatalkan puasa.</div></div><div class="val-req">Wajib</div></div>
+        <div class="val-row"><div class="val-n">03</div><div><div class="val-key">Al-Ikhtiyar — Sukarela</div><div class="val-sub">Dilakukan atas kemauan sendiri, bukan karena paksaan atau tidak berdaya.</div></div><div class="val-req">Wajib</div></div>
       </div>
     </div></div>
   </div>
@@ -2685,5 +2770,3 @@ updateUI();
 </script>
 </body>
 </html>
-
-feat: update index.html versi terbaru dakwah publik
